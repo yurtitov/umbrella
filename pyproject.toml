@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "umbrella"
+version = "0.1.0"
+description = "App to help backup your data"
+authors = ["Yuriy Titov <yurtitov@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pytest = "^7.4.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
