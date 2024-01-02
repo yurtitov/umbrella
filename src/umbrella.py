@@ -2,6 +2,11 @@
 
 import argparse
 from crontab import CronTab
+from properties import Property
+
+
+def get_crontab() -> CronTab:
+    return CronTab(user=True)
 
 
 def do_info() -> None:
@@ -9,6 +14,9 @@ def do_info() -> None:
     Invoke Info command
     """
     print(f"Command Info")
+    props = Property('/Users/yuriytitov/.umbrella/config.yml')
+    id = props.get_property('task.id.subid', '!!!')
+    print(id)
 
 
 def do_start() -> None:
@@ -16,8 +24,9 @@ def do_start() -> None:
     Invoke Start command
     """
     print(f"Command Start")
-    cron = CronTab(user=True)
-    job = cron.new(command='echo Start-start-start')
+    cron = get_crontab()
+    job = cron.new(
+        command='/Users/yuriytitov/development/umbrella/src/action.sh >> /Users/yuriytitov/development/umbrella/src/log.log')
     job.minute.every(1)
     cron.write()
 
