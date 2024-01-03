@@ -1,9 +1,11 @@
 import yaml
+import os.path
 
 
 class Property:
-    def __init__(self, file_name: str):
-        self.__file_name = file_name
+    def __init__(self, file_path: str):
+        self.__check_file_exists(file_path)
+        self.__file_name = file_path
 
     def get_property_mandatory(self, key: str) -> str:
         key_array = key.split('.')
@@ -23,3 +25,8 @@ class Property:
             return default
         except TypeError:
             return default
+
+    @staticmethod
+    def __check_file_exists(file_path):
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f'File not found: {file_path}')
