@@ -1,21 +1,21 @@
 from crontab import CronTab
+
 import path_utils
-import logging
+from logger import MainLogger
 from task import Task
 from task_provider import TaskProvider
 
+logger = MainLogger().get_logger()
+
 
 class CommandProvider:
-    def __init__(self):
-        log_path = f'{path_utils.datadir()}/command-provider.log'
-        logging.basicConfig(filename=log_path, encoding='utf-8', level=logging.DEBUG)
 
     def do_info(self) -> None:
         """
         Invoke Info command
         """
         print(f"Command Info")
-        logging.info('Command Info')
+        logger.info('Command Info')
         cron = self.__get_crontab()
         print(cron)
 
@@ -24,14 +24,24 @@ class CommandProvider:
            Invoke Start command
            """
         print(f"Command Start")
-        logging.info('Command Start')
+        logger.info('Command Start')
         cron = self.__get_crontab()
         tasks: list[Task] = TaskProvider().all_tasks()
+        script = f'{path_utils.current_dir()}/git_backup_action.py'
+        self.__check_action_script_exist(script)
         for task in tasks:
             job = cron.new(
-                command=f'python3 {path_utils.curdir()}/git_backup_action.py {task.path}')
+                command=f'{script} {task.path}')
             self.__set_interval(job, task)
             cron.write()
+
+    def __check_action_script_exist(self, script):
+        try:
+            path_utils.check_file_exists(script)
+        except FileNotFoundError as exception:
+            logger.error(f'Action script file not found: {script}. Error: {str(exception)}')
+        else:
+            logger.info(f'Action script file found: {script}')
 
     def __set_interval(self, job, task):
         if task.interval == Task.Interval.MINUTES:
@@ -46,7 +56,7 @@ class CommandProvider:
         Invoke Stop command
         """
         print(f"Command Stop")
-        logging.info('Command Stop')
+        logger.info('Command Stop')
         cron = self.__get_crontab()
         cron.remove_all()
 

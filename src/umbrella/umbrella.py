@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
-import logging
-import path_utils
 from command_provider import CommandProvider
+from logger import MainLogger
 
-log_path = f'{path_utils.datadir()}/main.log'
-logging.basicConfig(filename=log_path)
-logger = logging.getLogger(__name__)
+logger = MainLogger().get_logger()
 
 
 def get_command_name() -> str:

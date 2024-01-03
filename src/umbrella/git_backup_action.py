@@ -2,27 +2,37 @@
 
 import subprocess
 import sys
-import logging
-import path_utils
+from subprocess import CalledProcessError
 from datetime import datetime
+
+from logger import ActionLogger
 
 
 class GitBackupAction:
     def __init__(self, target: str):
         self.__target_path = target
-        log_path = f'{path_utils.datadir()}/git-backup-action.log'
-        print(log_path)
-        logging.basicConfig(filename=log_path, encoding='utf-8', level=logging.DEBUG)
-        logging.info(f'GitBackupAction is created')
+        self.__logger = ActionLogger().get_logger()
 
     def run(self):
-        logging.info('Action run')
+        self.__logger.info('Action script started >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
         script_lines = self.__get_script(self.__target_path)
-        logging.info(f'Script: {script_lines}')
+        self.__logger.info(f'Target path: {self.__target_path}')
         for line in script_lines:
-            output_file = f'{path_utils.datadir()}/bbb.log'
-            with open(output_file, 'a') as file:
-                subprocess.run(line, shell=True, executable="/bin/bash", stdout=file, stderr=file)
+            try:
+                process = subprocess.Popen(
+                    line,
+                    shell=True,
+                    executable="/bin/bash",
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT
+                )
+                process_output, process_error = process.communicate()
+                self.__log_process_output(str(process_output))
+
+            except (OSError, CalledProcessError) as exception:
+                self.__logger.info(f'Exception occured: {str(exception)}. Subprocess failed.')
+            else:
+                self.__logger.info('Action script finished <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
     def __get_script(self, __target_path) -> list[str]:
         result: list[str] = []
@@ -37,11 +47,14 @@ class GitBackupAction:
     def __content_changed(self, __target_path):
         return True
 
+    def __log_process_output(self, process_output: str):
+        process_output = process_output[2:-1]
+        lines = process_output.split('\\n')
+        for line in lines:
+            self.__logger.info(line)
+
 
 if __name__ == '__main__':
     target_path = sys.argv[1:]
-    log_path = f'{path_utils.datadir()}/action.log'
-    logging.basicConfig(filename=log_path)
-    logging.info(f'Target: {target_path}')
     action = GitBackupAction(target_path[0])
     action.run()
