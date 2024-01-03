@@ -1,11 +1,11 @@
 from task import Task
 from properties import Property
-import path_utils
+from path_utils import home_dir
 
 
 class TaskProvider:
     def all_tasks(self) -> list[Task]:
-        config_path = f'{path_utils.home()}/.umbrella/config.yml'
+        config_path = f'{home_dir()}/.umbrella/config.yml'
         props = Property(config_path)
         tasks = props.get_property_mandatory('tasks')
         result: list[Task] = []

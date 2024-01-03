@@ -1,7 +1,7 @@
 from logging import Logger
 
 import yaml
-import path_utils
+from path_utils import check_file_exists
 
 from logger import MainLogger
 
@@ -10,7 +10,7 @@ logger: Logger = MainLogger().get_logger()
 
 class Property:
     def __init__(self, file_path: str):
-        path_utils.check_file_exists(file_path)
+        check_file_exists(file_path)
         self.__file_name = file_path
 
     def get_property_mandatory(self, key: str) -> str:

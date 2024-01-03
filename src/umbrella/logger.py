@@ -1,5 +1,5 @@
 import logging
-import path_utils
+from path_utils import logs_dir
 
 
 class CommonLogger:
@@ -19,11 +19,11 @@ class CommonLogger:
 
 class MainLogger(CommonLogger):
     def __init__(self, logger_name: str = 'AppLogger', log_file_name: str = 'app.log'):
-        full_path = f'{path_utils.logs_dir()}/{log_file_name}'
+        full_path = f'{logs_dir()}/{log_file_name}'
         super().__init__(logger_name, full_path)
 
 
 class ActionLogger(CommonLogger):
     def __init__(self, logger_name: str = 'ActionLogger', log_file_name: str = 'action.log'):
-        full_path = f'{path_utils.logs_dir()}/{log_file_name}'
+        full_path = f'{logs_dir()}/{log_file_name}'
         super().__init__(logger_name, full_path)

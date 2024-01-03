@@ -1,6 +1,6 @@
 from crontab import CronTab
 
-import path_utils
+from path_utils import current_dir, check_file_exists
 from logger import MainLogger
 from task import Task
 from task_provider import TaskProvider
@@ -27,7 +27,7 @@ class CommandProvider:
         logger.info('Command Start')
         cron = self.__get_crontab()
         tasks: list[Task] = TaskProvider().all_tasks()
-        script = f'{path_utils.current_dir()}/git_backup_action.py'
+        script = f'{current_dir()}/git_backup_action.py'
         self.__check_action_script_exist(script)
         for task in tasks:
             job = cron.new(
@@ -37,7 +37,7 @@ class CommandProvider:
 
     def __check_action_script_exist(self, script):
         try:
-            path_utils.check_file_exists(script)
+            check_file_exists(script)
         except FileNotFoundError as exception:
             logger.error(f'Action script file not found: {script}. Error: {str(exception)}')
         else:
