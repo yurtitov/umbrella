@@ -2,12 +2,15 @@
 
 import subprocess
 import sys
-from path_utils import is_dir
+from path_utils import is_dir, db_dir
 from subprocess import CalledProcessError
 from datetime import datetime
 
 from logger import ActionLogger
-from changechecker.change_checker import ChangeChecker, MD5ChangeChecker
+from changechecker.abstract_change_checker import ChangeChecker
+from changechecker.md5_change_checker import MD5ChangeChecker
+from changechecker.mock_change_checker import MockChangeChecker
+from changechecker.folder_checksum_repository import SqliteFolderChecksumRepository
 
 
 class GitBackupAction:
@@ -57,5 +60,7 @@ class GitBackupAction:
 
 if __name__ == '__main__':
     target_path = sys.argv[1:][0]
-    action = GitBackupAction(target_path, MD5ChangeChecker())
+    folder_checksum_repository = SqliteFolderChecksumRepository()
+    # action = GitBackupAction(target_path, MD5ChangeChecker(folder_checksum_repository))
+    action = GitBackupAction(target_path, MockChangeChecker())
     action.run()

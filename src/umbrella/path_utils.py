@@ -2,6 +2,7 @@ import os
 
 DATA_DIR_NAME = '.umbrella'
 LOGS_DIR_NAME = 'logs'
+DB_DIR_NAME = 'db'
 HOME_DIR_SIGN = '~'
 
 
@@ -19,6 +20,10 @@ def data_dir() -> str:
 
 def logs_dir() -> str:
     return f'{data_dir()}/{LOGS_DIR_NAME}'
+
+
+def db_dir() -> str:
+    return f'{data_dir()}/{DB_DIR_NAME}'
 
 
 def is_dir(path: str) -> bool:
